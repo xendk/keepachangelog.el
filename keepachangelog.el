@@ -35,5 +35,20 @@
         (find-file (concat change-log-dir "CHANGELOG.md"))
       (user-error "Could not find CHANGELOG.md"))))
 
+(defun keepachangelog-find-next-version ()
+  "Move to the next version header."
+  (interactive)
+  (when-let ((point
+              (save-excursion
+                ;; Skip forward if we're already on a version header.
+                (when (looking-at (rx bol "## "))
+                  (forward-line))
+                (condition-case nil
+                    (progn (re-search-forward (rx bol "## "))
+                           (beginning-of-line)
+                           (point))
+                  (error (user-error "No more version headers"))))))
+    (goto-char point)))
+
 (provide 'keepachangelog)
 ;;; keepachangelog.el ends here
