@@ -24,4 +24,15 @@
 
       (keepachangelog-add-entry)
 
-      (expect (s-chop-prefix test-root (buffer-file-name (window-buffer))) :to-equal "/CHANGELOG.md"))))
+      (expect (s-chop-prefix test-root (buffer-file-name (window-buffer))) :to-equal "/CHANGELOG.md")))
+
+  (it "moves to the first version header"
+    (assess-with-filesystem
+        '(("CHANGELOG.md" "Preface
+## Version
+")
+          ("lisp/source.el"))
+      (find-file "lisp/source.el")
+
+      (keepachangelog-add-entry)
+      (expect (looking-at "## Version") :to-be-truthy))))

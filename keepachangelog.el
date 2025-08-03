@@ -32,7 +32,11 @@
   (interactive)
   (let ((change-log-dir (locate-dominating-file (buffer-file-name) "CHANGELOG.md")))
     (if change-log-dir
-        (find-file (concat change-log-dir "CHANGELOG.md"))
+        (progn
+          (find-file (concat change-log-dir "CHANGELOG.md"))
+          (goto-char (point-min))
+          (when-let ((point (keepachangelog--find-next-version)))
+            (keepachangelog-next-version)))
       (user-error "Could not find CHANGELOG.md"))))
 
 (defun keepachangelog-next-version ()

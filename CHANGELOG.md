@@ -8,5 +8,5 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## 0.0.1 - [Unreleased]
 
 ### Added
-- `keepachangelog-add-entry` to open changelog.
+- `keepachangelog-add-entry` to open changelog and go to first version header.
 - `keepachangelog-next-version` to navigate to next version header.
