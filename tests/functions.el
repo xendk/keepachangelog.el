@@ -8,30 +8,29 @@
     (assess-as-temp-buffer "Preface
 ## First version
 ## Second version"
-                           (goto-char (point-min))
+      (goto-char (point-min))
 
-                           (keepachangelog-next-version)
-                           (expect (looking-at "## First version") :to-be-truthy)
-                           (keepachangelog-next-version)
-                           (expect (looking-at "## Second version") :to-be-truthy)))
+      (keepachangelog-next-version)
+      (expect (looking-at "## First version") :to-be-truthy)
+      (keepachangelog-next-version)
+      (expect (looking-at "## Second version") :to-be-truthy)))
 
   (it "user-errors if no more version headers found"
     (assess-as-temp-buffer "Preface
 ## First version
 No more"
-                           (goto-char (point-min))
+      (goto-char (point-min))
 
-                           (keepachangelog-next-version)
-                           (expect (looking-at "## First version") :to-be-truthy)
+      (keepachangelog-next-version)
+      (expect (looking-at "## First version") :to-be-truthy)
 
-                           (expect (keepachangelog-next-version) :to-throw 'user-error '("No more version headers"))))
+      (expect (keepachangelog-next-version) :to-throw 'user-error '("No more version headers"))))
   (it "doesn't move point if no more version headers found"
     (assess-as-temp-buffer "Preface
 ## First version
 No more"
-                           (goto-char (point-min))
+      (goto-char (point-min))
 
-                           (keepachangelog-next-version)
-                           (expect (keepachangelog-next-version) :to-throw 'user-error '("No more version headers"))
-                           (expect (looking-at "## First version") :to-be-truthy)
-                           )))
+      (keepachangelog-next-version)
+      (expect (keepachangelog-next-version) :to-throw 'user-error '("No more version headers"))
+      (expect (looking-at "## first version") :to-be-truthy))))

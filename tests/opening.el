@@ -9,19 +9,19 @@
 
   (it "throws if no changelog is found"
     (assess-with-filesystem
-     '(("lisp/source.el"))
-     (setq test-root default-directory)
-     (find-file "lisp/source.el")
+        '(("lisp/source.el"))
+      (setq test-root default-directory)
+      (find-file "lisp/source.el")
 
-     (expect (keepachangelog-add-entry) :to-throw)))
+      (expect (keepachangelog-add-entry) :to-throw)))
 
   (it "switches to the changlog buffer"
     (assess-with-filesystem
-     '(("CHANGELOG.md")
-       ("lisp/source.el"))
-     (setq test-root default-directory)
-     (find-file "lisp/source.el")
+        '(("CHANGELOG.md")
+          ("lisp/source.el"))
+      (setq test-root default-directory)
+      (find-file "lisp/source.el")
 
-     (keepachangelog-add-entry)
+      (keepachangelog-add-entry)
 
-     (expect (s-chop-prefix test-root (buffer-file-name (window-buffer))) :to-equal "/CHANGELOG.md"))))
+      (expect (s-chop-prefix test-root (buffer-file-name (window-buffer))) :to-equal "/CHANGELOG.md"))))
