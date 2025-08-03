@@ -9,4 +9,4 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 - `keepachangelog-add-entry` to open changelog.
-- `keepachangelog-find-next-version` to navigate to next version header.
+- `keepachangelog-next-version` to navigate to next version header.

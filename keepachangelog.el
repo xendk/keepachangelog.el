@@ -35,7 +35,7 @@
         (find-file (concat change-log-dir "CHANGELOG.md"))
       (user-error "Could not find CHANGELOG.md"))))
 
-(defun keepachangelog-find-next-version ()
+(defun keepachangelog-next-version ()
   "Move to the next version header."
   (interactive)
   (when-let ((point
