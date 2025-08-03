@@ -15,7 +15,7 @@
                            (keepachangelog-find-next-version)
                            (expect (looking-at "## Second version") :to-be-truthy)))
 
-  (it "triggers error if no more version headers found"
+  (it "user-errors if no more version headers found"
     (assess-as-temp-buffer "Preface
 ## First version
 No more"
