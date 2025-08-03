@@ -35,28 +35,31 @@
         (progn
           (find-file (concat change-log-dir "CHANGELOG.md"))
           (goto-char (point-min))
-          (when-let ((point (keepachangelog--find-next-version)))
+          (when-let ((point (keepachangelog--find-version)))
             (keepachangelog-next-version)))
       (user-error "Could not find CHANGELOG.md"))))
 
 (defun keepachangelog-next-version ()
   "Move to the next version header."
   (interactive)
-  (let ((point (keepachangelog--find-next-version)))
+  (let ((point (keepachangelog--find-version)))
     (if point (goto-char point)
       (user-error "No more version headers"))))
 
-(defun keepachangelog--find-next-version ()
-  "Return start of next version."
-  (save-excursion
-    ;; Skip forward if we're already on a version header.
-    (when (looking-at (rx bol "## "))
-      (forward-line))
-    (condition-case nil
-        (progn (re-search-forward (rx bol "## "))
-               (beginning-of-line)
-               (point))
-      (error nil))))
+(defun keepachangelog--find-version (&optional count)
+  "Find the next/previous release.
+
+COUNT defines direction and number to skip."
+  (let ((count (or count 1)))
+    (save-excursion
+      ;; Skip forward if we're already on a version header.
+      (when (looking-at (rx bol "## "))
+        (forward-line count))
+      (condition-case nil
+          (progn (re-search-forward (rx bol "## ") nil nil count)
+                 (beginning-of-line)
+                 (point))
+        (error nil)))))
 
 (provide 'keepachangelog)
 ;;; keepachangelog.el ends here
