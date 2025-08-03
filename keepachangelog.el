@@ -30,7 +30,7 @@
 (defun keepachangelog-add-entry ()
   "Open CHANGELOG.md for adding a new entry."
   (interactive)
-  (let ((change-log-dir (locate-dominating-file (buffer-file-name) "CHANGELOG.md")))
+  (let ((change-log-dir (locate-dominating-file default-directory "CHANGELOG.md")))
     (if change-log-dir
         (progn
           (find-file (concat change-log-dir "CHANGELOG.md"))
