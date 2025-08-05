@@ -26,6 +26,14 @@
 
 ;;; Code:
 
+(defvar keepachangelog--sections '("Added"
+                                   "Changed"
+                                   "Deprecated"
+                                   "Removed"
+                                   "Fixed"
+                                   "Security")
+  "Known section types and their order.")
+
 ;;;###autoload
 (defun keepachangelog-add-entry ()
   "Open CHANGELOG.md for adding a new entry."
@@ -46,17 +54,43 @@
     (if point (goto-char point)
       (user-error "No more version headers"))))
 
+(defun keepachangelog--find-or-insert-section (section)
+  "Find or add a SECTION section after point."
+  (if-let ((pos (keepachangelog--find (concat "### " section))))
+      (goto-char pos)
+    ;; Loop over sections until the one we're inserting.
+    (let ((sections keepachangelog--sections))
+      (while (and sections (not (equal (car sections) section)))
+        (when-let ((pos (keepachangelog--find (concat "### " (car sections)))))
+          (goto-char pos)
+          (forward-line))
+        (setq sections (cdr sections))))
+    (keepachangelog--insert-section section)))
+
+(defun keepachangelog--insert-section (section)
+  "Insert SECTION at point, ensuring the proper surrounding whitespace."
+  (unless (looking-at "^[[:blank:]]*$") (insert "\n"))
+  (save-excursion
+    (insert "### " section "\n")
+    (unless (looking-at "^[[:blank:]]*$") (insert "\n"))))
+
 (defun keepachangelog--find-version (&optional count)
   "Find the next/previous release.
+
+COUNT defines direction and number to skip."
+  (keepachangelog--find "## " count))
+
+(defun keepachangelog--find (regex &optional count)
+  "Find the next/previous line matching REGEX at start of line..
 
 COUNT defines direction and number to skip."
   (let ((count (or count 1)))
     (save-excursion
       ;; Skip forward if we're already on a version header.
-      (when (looking-at (rx bol "## "))
+      (when (looking-at regex)
         (forward-line count))
       (condition-case nil
-          (progn (re-search-forward (rx bol "## ") nil nil count)
+          (progn (re-search-forward regex nil nil count)
                  (beginning-of-line)
                  (point))
         (error nil)))))
