@@ -3,11 +3,11 @@
 (require 'keepachangelog)
 (require 'helpers)
 
-(describe "keepachangelog--find-or-insert-section"
+(describe "keepachangelog--section-find-or-insert"
   (it "adds a new section"
     (with-buffer "|"
 
-      (keepachangelog--find-or-insert-section "Added")
+      (keepachangelog--section-find-or-insert "Added")
 
       (expect (buffer-string) :to-equal "### Added\n")))
 
@@ -16,7 +16,7 @@
 ### Added
 - stuff"
 
-      (keepachangelog--find-or-insert-section "Added")
+      (keepachangelog--section-find-or-insert "Added")
 
       (expect (looking-at "### Added") :to-be-truthy)
       (expect (buffer-string) :to-equal "Preface
@@ -28,7 +28,7 @@
 ### Added
 ### Deprecated"
 
-      (keepachangelog--find-or-insert-section "Changed")
+      (keepachangelog--section-find-or-insert "Changed")
 
       (expect (buffer-string) :to-equal "Preface
 ### Added
@@ -36,8 +36,7 @@
 ### Changed
 
 ### Deprecated")
-      (expect (looking-at "### Changed") :to-be-truthy)
-      )))
+      (expect (looking-at "### Changed") :to-be-truthy))))
 
 (describe "keepachangelog--section-skip-to-end"
   (it "skips headline and items"
@@ -78,35 +77,32 @@
       (keepachangelog--section-skip-to-end)
       (expect (looking-at "\n\n- first") :to-be-truthy))))
 
-(describe "keepachangelog--insert-section"
+(describe "keepachangelog--section-insert"
   (it "inserts section and surrounding empty lines"
     (with-buffer "### One
 |### Three"
 
-      (keepachangelog--insert-section "Two")
+      (keepachangelog--section-insert "Two")
 
       (expect (buffer-string) :to-equal "### One
 
 ### Two
 
 ### Three")
-      (expect (looking-at "### Two") :to-be-truthy)
-      ))
+      (expect (looking-at "### Two") :to-be-truthy)))
 
   (it "does not add newlines at start and end of buffer"
     (with-buffer "|"
 
-      (keepachangelog--insert-section "Two")
+      (keepachangelog--section-insert "Two")
 
       (expect (buffer-string) :to-equal "### Two\n")
-      (expect (looking-at "### Two") :to-be-truthy)
-      ))
+      (expect (looking-at "### Two") :to-be-truthy)))
 
   (it "keeps superfluous surrounding newlines"
     (with-buffer "### One\n\n\n|\n\n\n### Three"
 
-      (keepachangelog--insert-section "Two")
+      (keepachangelog--section-insert "Two")
 
       (expect (buffer-string) :to-equal "### One\n\n\n### Two\n\n\n\n### Three")
-      (expect (looking-at "### Two") :to-be-truthy)
-      )))
+      (expect (looking-at "### Two") :to-be-truthy))))

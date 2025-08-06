@@ -54,7 +54,30 @@
     (if point (goto-char point)
       (user-error "No more version headers"))))
 
-(defun keepachangelog--find-or-insert-section (section)
+(defun keepachangelog--find-version (&optional count)
+  "Find the next/previous release.
+
+COUNT defines direction and number to skip."
+  (keepachangelog--find "## " count))
+
+(defun keepachangelog--find (regex &optional count)
+  "Find the next/previous line matching REGEX at start of line..
+
+COUNT defines direction and number to skip."
+  (let ((count (or count 1)))
+    (save-excursion
+      ;; Skip forward if we're already on a version header.
+      (when (looking-at regex)
+        (forward-line count))
+      (condition-case nil
+          (progn (re-search-forward regex nil nil count)
+                 (beginning-of-line)
+                 (point))
+        (error nil)))))
+
+;;; Section functions.
+
+(defun keepachangelog--section-find-or-insert (section)
   "Find or add a SECTION section after point."
   (if-let ((pos (keepachangelog--find (concat "### " section))))
       (goto-char pos)
@@ -65,7 +88,7 @@
           (goto-char pos)
           (forward-line))
         (setq sections (cdr sections))))
-    (keepachangelog--insert-section section)))
+    (keepachangelog--section-insert section)))
 
 (defun keepachangelog--section-skip-to-end ()
   "Skip to end of current section."
@@ -88,41 +111,20 @@
   (when (not (looking-at "^$"))
     (insert "\n")))
 
-(defun keepachangelog--insert-section (section)
+(defun keepachangelog--section-insert (section)
   "Insert SECTION at point, ensuring the proper surrounding whitespace."
   (unless (looking-at "^[[:blank:]]*$") (insert "\n"))
   (save-excursion
     (insert "### " section "\n")
     (unless (looking-at "^[[:blank:]]*$") (insert "\n"))))
 
-(defun keepachangelog--insert-section-entry ()
+(defun keepachangelog--section-insert-entry ()
   "Add an empty entry to the current section."
   ;; or rather should we split it up into
   ;; keepachangelog--skip-to-section-end and keepachangelog--insert-entry?
   (keepachangelog--section-skip-to-end)
   (insert "- \n")
   (backward-char))
-
-(defun keepachangelog--find-version (&optional count)
-  "Find the next/previous release.
-
-COUNT defines direction and number to skip."
-  (keepachangelog--find "## " count))
-
-(defun keepachangelog--find (regex &optional count)
-  "Find the next/previous line matching REGEX at start of line..
-
-COUNT defines direction and number to skip."
-  (let ((count (or count 1)))
-    (save-excursion
-      ;; Skip forward if we're already on a version header.
-      (when (looking-at regex)
-        (forward-line count))
-      (condition-case nil
-          (progn (re-search-forward regex nil nil count)
-                 (beginning-of-line)
-                 (point))
-        (error nil)))))
 
 (provide 'keepachangelog)
 ;;; keepachangelog.el ends here
