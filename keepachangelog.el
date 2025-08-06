@@ -118,7 +118,7 @@ COUNT defines direction and number to skip."
     (insert "### " section "\n")
     (unless (looking-at "^[[:blank:]]*$") (insert "\n"))))
 
-(defun keepachangelog--section-insert-entry ()
+(defun keepachangelog--section-add-entry ()
   "Add an empty entry to the current section."
   ;; or rather should we split it up into
   ;; keepachangelog--skip-to-section-end and keepachangelog--insert-entry?
