@@ -61,12 +61,12 @@ COUNT defines direction and number to skip."
   (keepachangelog--find "## " count))
 
 (defun keepachangelog--find (regex &optional count)
-  "Find the next/previous line matching REGEX at start of line..
+  "Find the next/previous line matching REGEX at start of line.
 
 COUNT defines direction and number to skip."
   (let ((count (or count 1)))
     (save-excursion
-      ;; Skip forward if we're already on a version header.
+      ;; Skip forward if we're already on a match header.
       (when (looking-at regex)
         (forward-line count))
       (condition-case nil
