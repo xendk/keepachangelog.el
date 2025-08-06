@@ -67,12 +67,41 @@
         (setq sections (cdr sections))))
     (keepachangelog--insert-section section)))
 
+(defun keepachangelog--section-skip-to-end ()
+  "Skip to end of current section."
+  (beginning-of-line)
+  ;; We'll allow an empty line after the header, which complicates
+  ;; things a bit.
+  (when (looking-at "###")
+    (forward-line)
+    (when (and
+           (looking-at "^$")
+           ;; Peek the next line.
+           (save-excursion
+             (forward-line)
+             (looking-at "^-")))
+      (forward-line)))
+  (while (and (not (looking-at "^$")) (not (eobp)))
+    (forward-line))
+  ;; If we're not on an empty line, we must have reached the end of
+  ;; buffer, so insert an empty line.
+  (when (not (looking-at "^$"))
+    (insert "\n")))
+
 (defun keepachangelog--insert-section (section)
   "Insert SECTION at point, ensuring the proper surrounding whitespace."
   (unless (looking-at "^[[:blank:]]*$") (insert "\n"))
   (save-excursion
     (insert "### " section "\n")
     (unless (looking-at "^[[:blank:]]*$") (insert "\n"))))
+
+(defun keepachangelog--insert-section-entry ()
+  "Add an empty entry to the current section."
+  ;; or rather should we split it up into
+  ;; keepachangelog--skip-to-section-end and keepachangelog--insert-entry?
+  (keepachangelog--section-skip-to-end)
+  (insert "- \n")
+  (backward-char))
 
 (defun keepachangelog--find-version (&optional count)
   "Find the next/previous release.

@@ -39,6 +39,45 @@
       (expect (looking-at "### Changed") :to-be-truthy)
       )))
 
+(describe "keepachangelog--section-skip-to-end"
+  (it "skips headline and items"
+    (with-buffer "|### Section
+- first
+- second
+
+### 'nother"
+      (keepachangelog--section-skip-to-end)
+      (expect (looking-at "\n### 'nother") :to-be-truthy)
+      ))
+
+  (it "handles no empty lines"
+    (with-buffer "|- two
+- two"
+      (keepachangelog--section-skip-to-end)
+      (expect (point) :to-equal (point-max))
+      (expect (looking-at "^$") :to-be-truthy)))
+
+  (it "allows one empty line after header"
+    (with-buffer "|### Section
+
+- first
+- second
+
+### 'nother"
+      (keepachangelog--section-skip-to-end)
+      (expect (looking-at "\n### 'nother") :to-be-truthy)))
+
+  (it "considers two empty line after header end of section"
+    (with-buffer "|### Section
+
+
+- first
+- second
+
+### 'nother"
+      (keepachangelog--section-skip-to-end)
+      (expect (looking-at "\n\n- first") :to-be-truthy))))
+
 (describe "keepachangelog--insert-section"
   (it "inserts section and surrounding empty lines"
     (with-buffer "### One
