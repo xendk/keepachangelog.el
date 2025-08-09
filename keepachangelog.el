@@ -54,23 +54,31 @@
     (if point (goto-char point)
       (user-error "No more version headers"))))
 
-(defun keepachangelog--find-version (&optional count)
+(defun keepachangelog--find-version (&optional count allow-current)
   "Find the next/previous release.
 
-COUNT defines direction and number to skip."
-  (keepachangelog--find "## " count))
+COUNT defines direction and number to skip, ALLOW-CURRENT defines wether
+to the current line is considered."
+  (keepachangelog--find-line "## " count allow-current))
 
-(defun keepachangelog--find (regex &optional count)
+(defun keepachangelog--find-line (regex &optional count allow-current)
   "Find the next/previous line matching REGEX at start of line.
 
-COUNT defines direction and number to skip."
+COUNT defines direction and number to skip, ALLOW-CURRENT defines wether
+the current line is considered."
   (let ((count (or count 1)))
     (save-excursion
       ;; Skip forward if we're already on a match header.
+      (beginning-of-line)
       (when (looking-at regex)
-        (forward-line count))
+        ;; Skip to end/start of line when searching forward/backwards
+        ;; to avoid matching current line, start/end when
+        ;; allow-current is t.
+        (if (xor allow-current (cl-plusp count))
+            (end-of-line)
+          (beginning-of-line)))
       (condition-case nil
-          (progn (re-search-forward regex nil nil count)
+          (progn (re-search-forward (concat "^" regex) nil nil count)
                  (beginning-of-line)
                  (point))
         (error nil)))))

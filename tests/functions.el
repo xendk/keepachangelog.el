@@ -4,6 +4,23 @@
 (require 'keepachangelog)
 (require 'helpers)
 
+(describe "keepachangelog--find-line"
+  (it "finds regex"
+    (with-buffer "|\n##"
+      (expect (keepachangelog--find-line "##") :to-equal 2)))
+
+  (it "ignores the current line even if it matches per default"
+    (with-buffer "\n|## \n"
+      (expect (keepachangelog--find-line "##") :not :to-be-truthy))
+    (with-buffer "\n## Padding|\n"
+      (expect (keepachangelog--find-line "##" -1) :not :to-be-truthy)))
+
+  (it "finds the current line if allow-current is t"
+    (with-buffer "\n|## \n"
+      (expect (keepachangelog--find-line "##" nil t) :to-be-truthy))
+    (with-buffer "\n## Padding|\n"
+      (expect (keepachangelog--find-line "##" -1 t) :to-be-truthy))))
+
 (describe "keepachangelog-next-version"
   (it "moves point to next version header"
     (assess-as-temp-buffer "Preface
