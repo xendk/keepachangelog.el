@@ -12,8 +12,8 @@
       (expect (buffer-string) :to-equal "### Added\n")))
 
   (it "jumps to existing section "
-    (with-buffer "|Preface
-### Added
+    (with-buffer "Preface
+|### Added
 - stuff"
 
       (keepachangelog--section-find-or-insert "Added")
@@ -24,8 +24,8 @@
 - stuff")))
 
   (it "inserts sections in the appropriate order"
-    (with-buffer "|Preface
-### Added
+    (with-buffer "Preface
+|### Added
 ### Deprecated"
 
       (keepachangelog--section-find-or-insert "Changed")
@@ -36,7 +36,24 @@
 ### Changed
 
 ### Deprecated")
-      (expect (looking-at "### Changed") :to-be-truthy))))
+      (expect (looking-at "### Changed") :to-be-truthy)))
+
+  (it "inserts first section properly"
+    (with-buffer "Preface
+
+|### Removed
+"
+
+      (keepachangelog--section-find-or-insert "Added")
+
+      (expect (buffer-string) :to-equal "Preface
+
+### Added
+
+### Removed
+")
+      (expect (looking-at "### Added") :to-be-truthy)))
+  )
 
 (describe "keepachangelog--section-skip-to-end"
   (it "skips headline and items"
@@ -97,6 +114,14 @@
       (keepachangelog--section-insert "Two")
 
       (expect (buffer-string) :to-equal "### Two\n")
+      (expect (looking-at "### Two") :to-be-truthy)))
+
+  (it "applies the right vertical spacing per default"
+    (with-buffer "### One\n\n|### Three"
+
+      (keepachangelog--section-insert "Two")
+
+      (expect (buffer-string) :to-equal "### One\n\n### Two\n\n### Three")
       (expect (looking-at "### Two") :to-be-truthy)))
 
   (it "keeps superfluous surrounding newlines"

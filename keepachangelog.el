@@ -98,19 +98,32 @@ the current line is considered."
                  (point))
         (error nil)))))
 
+(defun keepachangelog-add-entry-to-section (section)
+  (interactive)
+  (keepachangelog-with-current-version
+    ;; Skip to either sections or end.
+    (goto-char (or (keepachangelog--find-line (concat "### ") 1 t)
+                   (point-max)))
+    (keepachangelog--section-find-or-insert section)
+    (keepachangelog--section-add-entry)))
+
 ;;; Section functions.
 
 (defun keepachangelog--section-find-or-insert (section)
-  "Find or add a SECTION section after point."
+  "Find or add a SECTION section after point.
+
+Expects to be on the first line of sections (which may be empty)."
   (if-let ((pos (keepachangelog--find-line (concat "### " section) 1 t)))
       (goto-char pos)
     ;; Loop over sections until the one we're inserting.
-    (let ((sections keepachangelog--sections))
+    (let* ((sections keepachangelog--sections)
+           found)
       (while (and sections (not (equal (car sections) section)))
-        (when-let ((pos (keepachangelog--find-line (concat "### " (car sections)))))
-          (goto-char pos))
-        (setq sections (cdr sections))))
-    (keepachangelog--section-insert section)))
+        (when-let ((pos (keepachangelog--find-line (concat "### " (car sections)) 1 t)))
+          (goto-char pos)
+          (setq found t))
+        (setq sections (cdr sections)))
+      (keepachangelog--section-insert section found))))
 
 (defun keepachangelog--section-skip-to-end ()
   "Skip to end of current section.
@@ -135,12 +148,15 @@ That is, the following empty line."
   (when (not (looking-at "^$"))
     (insert "\n")))
 
-(defun keepachangelog--section-insert (section)
-  "Insert SECTION at point, ensuring the proper surrounding whitespace."
+(defun keepachangelog--section-insert (section &optional after)
+  "Insert SECTION at point, ensuring the proper surrounding whitespace.
+
+If there's a section header at point, insert the new one before unless
+AFTER is t."
+  (when (and (not after) (looking-at "^### ")) (save-excursion (insert "\n")))
   (unless (looking-at "^[[:blank:]]*$") (end-of-line) (insert "\n\n"))
   (save-excursion
-    (insert "### " section "\n")
-    (unless (looking-at "^[[:blank:]]*$") (insert "\n"))))
+    (insert "### " section "\n")))
 
 (defun keepachangelog--section-add-entry ()
   "Add an empty entry to the current section."
