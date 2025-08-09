@@ -34,6 +34,21 @@
                                    "Security")
   "Known section types and their order.")
 
+(defmacro keepachangelog-with-current-version (&rest body)
+  "Narrow to current version and run BODY.
+
+The block is run with point at the beginning.
+
+Raises user-error if not inside a version."
+  (declare (indent 0) (debug t))
+  `(let ((beg (keepachangelog--find-version -1 t))
+         (end (or (keepachangelog--find-version) (point-max))))
+     (unless beg
+       (user-error "Not inside a version"))
+     (with-restriction beg end
+       (goto-char (point-min))
+       (progn ,@body))))
+
 ;;;###autoload
 (defun keepachangelog-add-entry ()
   "Open CHANGELOG.md for adding a new entry."
