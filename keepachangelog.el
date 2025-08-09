@@ -87,19 +87,20 @@ the current line is considered."
 
 (defun keepachangelog--section-find-or-insert (section)
   "Find or add a SECTION section after point."
-  (if-let ((pos (keepachangelog--find (concat "### " section))))
+  (if-let ((pos (keepachangelog--find-line (concat "### " section) 1 t)))
       (goto-char pos)
     ;; Loop over sections until the one we're inserting.
     (let ((sections keepachangelog--sections))
       (while (and sections (not (equal (car sections) section)))
-        (when-let ((pos (keepachangelog--find (concat "### " (car sections)))))
-          (goto-char pos)
-          (forward-line))
+        (when-let ((pos (keepachangelog--find-line (concat "### " (car sections)))))
+          (goto-char pos))
         (setq sections (cdr sections))))
     (keepachangelog--section-insert section)))
 
 (defun keepachangelog--section-skip-to-end ()
-  "Skip to end of current section."
+  "Skip to end of current section.
+
+That is, the following empty line."
   (beginning-of-line)
   ;; We'll allow an empty line after the header, which complicates
   ;; things a bit.
@@ -121,7 +122,7 @@ the current line is considered."
 
 (defun keepachangelog--section-insert (section)
   "Insert SECTION at point, ensuring the proper surrounding whitespace."
-  (unless (looking-at "^[[:blank:]]*$") (insert "\n"))
+  (unless (looking-at "^[[:blank:]]*$") (end-of-line) (insert "\n\n"))
   (save-excursion
     (insert "### " section "\n")
     (unless (looking-at "^[[:blank:]]*$") (insert "\n"))))
@@ -129,7 +130,6 @@ the current line is considered."
 (defun keepachangelog--section-add-entry ()
   "Add an empty entry to the current section."
   ;; or rather should we split it up into
-  ;; keepachangelog--skip-to-section-end and keepachangelog--insert-entry?
   (keepachangelog--section-skip-to-end)
   (insert "- \n")
   (backward-char))

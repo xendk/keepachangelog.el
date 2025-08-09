@@ -18,6 +18,8 @@
   (declare (indent 1) (debug t))
   `(let ((parts (split-string ,x "|")))
      (assess-as-temp-buffer (apply 'concat parts)
+       ;; First cursor position in a buffer is 1, and an empty string
+       ;; before the | string is the same.
        (goto-char (1+ (length (car parts))))
        ,@body)))
 

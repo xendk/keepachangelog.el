@@ -79,8 +79,8 @@
 
 (describe "keepachangelog--section-insert"
   (it "inserts section and surrounding empty lines"
-    (with-buffer "### One
-|### Three"
+    (with-buffer "### O|ne
+### Three"
 
       (keepachangelog--section-insert "Two")
 

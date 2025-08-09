@@ -43,6 +43,7 @@ No more"
       (expect (looking-at "## First version") :to-be-truthy)
 
       (expect (keepachangelog-next-version) :to-throw 'user-error '("No more version headers"))))
+
   (it "doesn't move point if no more version headers found"
     (assess-as-temp-buffer "Preface
 ## First version
