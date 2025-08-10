@@ -95,6 +95,12 @@ Raises user-error if not inside a version."
       (user-error "No more version headers"))))
 
 (defun keepachangelog-add-entry-to-section (section)
+  "Add an empty entry to SECTION of version at point.
+
+Will find the SECTION to add an item to or create it if
+necessary (ensuring the proper section order).
+
+When called interactively, prompt for section to add to."
   (interactive (list
                 (completing-read "Add entry to section: "
                                  keepachangelog--sections

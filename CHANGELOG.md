@@ -13,4 +13,4 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - `keepachangelog-next-version` to navigate to next version header.
 - `keepachangelog-add-entry-to-section` to add an entry to a section
   of the current version. Will ask for the section and insert new
-  entries as needed.
+  sections as needed.
