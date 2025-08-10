@@ -4,5 +4,5 @@
 (eldev-use-package-archive 'melpa)
 
 (eldev-use-plugin 'autoloads)
-(eldev-add-extra-dependencies 'test 'assess 's)
+(eldev-add-extra-dependencies 'test 'assess 's 'with-simulated-input)
 (eldev-add-loading-roots 'test "tests")

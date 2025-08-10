@@ -1,6 +1,7 @@
 ;;; -*- lexical-binding: t; -*-
 (require 'buttercup)
 (require 'assess)
+(require 'with-simulated-input)
 (require 's)
 (require 'keepachangelog)
 
@@ -16,23 +17,26 @@
       (expect (keepachangelog-add-entry) :to-throw)))
 
   (it "switches to the changlog buffer"
-    (assess-with-filesystem
-        '(("CHANGELOG.md")
-          ("lisp/source.el"))
-      (setq test-root default-directory)
-      (find-file "lisp/source.el")
+    (with-simulated-input "Added RET"
+      (assess-with-filesystem
+          '(("CHANGELOG.md")
+            ("lisp/source.el"))
+        (setq test-root default-directory)
+        (find-file "lisp/source.el")
 
-      (keepachangelog-add-entry)
+        (keepachangelog-add-entry)
 
-      (expect (s-chop-prefix test-root (buffer-file-name (window-buffer))) :to-equal "/CHANGELOG.md")))
+        (expect (s-chop-prefix test-root (buffer-file-name (window-buffer))) :to-equal "/CHANGELOG.md"))))
 
   (it "moves to the first version header"
-    (assess-with-filesystem
-        '(("CHANGELOG.md" "Preface
+    (with-simulated-input "Added RET"
+      (assess-with-filesystem
+          '(("CHANGELOG.md" "Preface
 ## Version
 ")
-          ("lisp/source.el"))
-      (find-file "lisp/source.el")
+            ("lisp/source.el"))
+        (find-file "lisp/source.el")
 
-      (keepachangelog-add-entry)
-      (expect (looking-at "## Version") :to-be-truthy))))
+        (keepachangelog-add-entry)
+        ;;(expect (looking-at "- ") :to-be-truthy)
+        (expect (buffer-string) :to-equal "Preface\n## Version\n\n### Added\n- \n")))))
