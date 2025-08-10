@@ -153,11 +153,10 @@ That is, the following empty line."
              (forward-line)
              (looking-at "^-")))
       (forward-line)))
-  (while (and (not (looking-at "^$")) (not (eobp)))
+  (while (and (looking-at "^[- \\t].*$") (not (eobp)))
     (forward-line))
-  ;; If we're not on an empty line, we must have reached the end of
-  ;; buffer, so insert an empty line.
-  (when (not (looking-at "^$"))
+  ;; Ensure there's at least one empty line if we're at buffer end.
+  (when (and (not (looking-at "^$")) (eobp))
     (insert "\n")))
 
 (defun keepachangelog--section-insert (section &optional after)
@@ -165,14 +164,24 @@ That is, the following empty line."
 
 If there's a section header at point, insert the new one before unless
 AFTER is t."
-  (when (and (not after) (looking-at "^### ")) (save-excursion (insert "\n")))
-  (unless (looking-at "^[[:blank:]]*$") (end-of-line) (insert "\n\n"))
+  (beginning-of-line)
+  (when (looking-at "^### ")
+    (if after
+        (progn
+          (keepachangelog--section-skip-to-end)
+          (insert "\n"))
+      (save-excursion (insert "\n"))))
+
+  ;; Make sure there's an empty line before.
   (save-excursion
-    (insert "### " section "\n")))
+    (forward-line -1)
+    (unless (looking-at "^[[:blank:]]*$") (insert "\n")))
+  (save-excursion
+    (insert "### " section "\n")
+    (unless (looking-at "^[[:blank:]]*$") (insert "\n"))))
 
 (defun keepachangelog--section-add-entry ()
   "Add an empty entry to the current section."
-  ;; or rather should we split it up into
   (keepachangelog--section-skip-to-end)
   (insert "- \n")
   (backward-char))

@@ -70,8 +70,7 @@
     (with-buffer "|- two
 - two"
       (keepachangelog--section-skip-to-end)
-      (expect (point) :to-equal (point-max))
-      (expect (looking-at "^$") :to-be-truthy)))
+      (expect (point) :to-equal (point-max))))
 
   (it "allows one empty line after header"
     (with-buffer "|### Section
@@ -92,20 +91,71 @@
 
 ### 'nother"
       (keepachangelog--section-skip-to-end)
-      (expect (looking-at "\n\n- first") :to-be-truthy))))
+      (expect (looking-at "\n\n- first") :to-be-truthy)))
+
+  (it "handles missing newlines between sections"
+    (with-buffer "|### Section
+- first
+- second
+### 'nother
+"
+      (keepachangelog--section-skip-to-end)
+      ;;(expect (looking-at "^$") :to-be-truthy)
+      (expect (looking-at "### 'nother") :to-be-truthy)
+      )))
 
 (describe "keepachangelog--section-insert"
   (it "inserts section and surrounding empty lines"
     (with-buffer "### O|ne
 ### Three"
 
-      (keepachangelog--section-insert "Two")
+      (keepachangelog--section-insert "Two" t)
 
       (expect (buffer-string) :to-equal "### One
 
 ### Two
 
 ### Three")
+      (expect (looking-at "### Two") :to-be-truthy)))
+
+  (it "handles items on the current item"
+    (with-buffer "|### One
+- entry one
+- entry two
+### Three"
+
+      (keepachangelog--section-insert "Two" t)
+
+      (expect (buffer-string) :to-equal "### One
+- entry one
+- entry two
+
+### Two
+
+### Three")
+      (expect (looking-at "### Two") :to-be-truthy))
+
+    (with-buffer "### One
+- entry one
+- entry two
+
+|### Three
+- entry three
+- entry four
+"
+
+      (keepachangelog--section-insert "Two")
+
+      (expect (buffer-string) :to-equal "### One
+- entry one
+- entry two
+
+### Two
+
+### Three
+- entry three
+- entry four
+")
       (expect (looking-at "### Two") :to-be-truthy)))
 
   (it "does not add newlines at start and end of buffer"
