@@ -8,7 +8,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## 0.0.1 - [Unreleased]
 
 ### Added
-- `keepachangelog-add-entry` to open changelog and go to first version header.
+- `keepachangelog-add-entry` to open changelog and add a section to
+  the first version.
 - `keepachangelog-next-version` to navigate to next version header.
 - `keepachangelog-add-entry-to-section` to add an entry to a section
   of the current version. Will ask for the section and insert new

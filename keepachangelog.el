@@ -83,7 +83,8 @@ Raises user-error if not inside a version."
           (find-file (concat change-log-dir "CHANGELOG.md"))
           (goto-char (point-min))
           (when-let ((point (keepachangelog--find-version)))
-            (keepachangelog-next-version)))
+            (keepachangelog-next-version)
+            (call-interactively 'keepachangelog-add-entry-to-section)))
       (user-error "Could not find CHANGELOG.md"))))
 
 (defun keepachangelog-next-version ()
