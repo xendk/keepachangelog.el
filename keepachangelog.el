@@ -43,7 +43,9 @@
 (defmacro keepachangelog-with-current-version (&rest body)
   "Narrow to current version and run BODY.
 
-The block is run with point at the beginning.
+The block is run with point at the beginning. The narrow does not
+include the empty line between this and the following versions but it
+ensures that it exists.
 
 Raises user-error if not inside a version."
   (declare (indent 0) (debug t))
@@ -51,6 +53,22 @@ Raises user-error if not inside a version."
          (end (or (keepachangelog--find-version) (point-max))))
      (unless beg
        (user-error "Not inside a version"))
+     ;; Deal with following newlines.
+     (unless (equal end (point-max))
+       (save-excursion
+         (goto-char end)
+         ;; Back up a line when on a version header.
+         (forward-line -1)
+         ;; Back up end while there's empty lines.
+         (when (looking-at "^$")
+           (setq end (point)))
+         (while (looking-at "^$")
+           (forward-line -1)
+           (when (looking-at "^$")
+             (setq end (point))))
+         ;; Ensure the line between versions.
+         (forward-line)
+         (unless (looking-at "^$") (insert "\n"))))
      (with-restriction beg end
        (goto-char (point-min))
        (progn ,@body))))
@@ -175,10 +193,10 @@ AFTER is t."
   ;; Make sure there's an empty line before.
   (save-excursion
     (forward-line -1)
-    (unless (looking-at "^[[:blank:]]*$") (insert "\n")))
-  (save-excursion
-    (insert "### " section "\n")
-    (unless (looking-at "^[[:blank:]]*$") (insert "\n"))))
+    (unless (looking-at "^[[:blank:]]*$") (end-of-line)(insert "\n")))
+   (save-excursion
+     (insert "### " section "\n")
+     (unless (looking-at "^[[:blank:]]*$") (insert "\n"))))
 
 (defun keepachangelog--section-add-entry ()
   "Add an empty entry to the current section."

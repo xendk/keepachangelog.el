@@ -28,4 +28,21 @@
 
 ### Added"
       (keepachangelog-add-entry-to-section "Added")
-      (expect (buffer-string) :to-equal "## V1\n\n### Added\n- \n\n### Removed\n\n## V2\n\n### Added"))))
+      (expect (buffer-string) :to-equal "## V1\n\n### Added\n- \n\n### Removed\n\n## V2\n\n### Added")))
+
+  (it "handles empty versions"
+    (with-buffer "## |V1
+
+## V2
+
+### Added"
+      (keepachangelog-add-entry-to-section "Added")
+      (expect (buffer-string) :to-equal "## V1\n\n### Added\n- \n\n## V2\n\n### Added")))
+
+  (it "handles missing empty line between versions"
+    (with-buffer "## |V1
+## V2
+
+### Added"
+      (keepachangelog-add-entry-to-section "Added")
+      (expect (buffer-string) :to-equal "## V1\n\n### Added\n- \n\n## V2\n\n### Added"))))
