@@ -34,6 +34,12 @@
                                    "Security")
   "Known section types and their order.")
 
+(defvar keepachangelog--section-history nil "Section history.")
+
+;; We don't need a big history, it's mostly the last few items that
+;; might be reused.
+(put 'keepachangelog--section-history 'history-length 10)
+
 (defmacro keepachangelog-with-current-version (&rest body)
   "Narrow to current version and run BODY.
 
@@ -69,6 +75,21 @@ Raises user-error if not inside a version."
     (if point (goto-char point)
       (user-error "No more version headers"))))
 
+(defun keepachangelog-add-entry-to-section (section)
+  (interactive (list
+                (completing-read "Add entry to section: "
+                                 keepachangelog--sections
+                                 nil
+                                 'confirm
+                                 nil
+                                 'keepachangelog--section-history)))
+  (keepachangelog-with-current-version
+    ;; Skip to either sections or end.
+    (goto-char (or (keepachangelog--find-line (concat "### ") 1 t)
+                   (point-max)))
+    (keepachangelog--section-find-or-insert section)
+    (keepachangelog--section-add-entry)))
+
 (defun keepachangelog--find-version (&optional count allow-current)
   "Find the next/previous release.
 
@@ -97,15 +118,6 @@ the current line is considered."
                  (beginning-of-line)
                  (point))
         (error nil)))))
-
-(defun keepachangelog-add-entry-to-section (section)
-  (interactive)
-  (keepachangelog-with-current-version
-    ;; Skip to either sections or end.
-    (goto-char (or (keepachangelog--find-line (concat "### ") 1 t)
-                   (point-max)))
-    (keepachangelog--section-find-or-insert section)
-    (keepachangelog--section-add-entry)))
 
 ;;; Section functions.
 

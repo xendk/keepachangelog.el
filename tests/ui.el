@@ -28,5 +28,4 @@
 
 ### Added"
       (keepachangelog-add-entry-to-section "Added")
-      (expect (buffer-string) :to-equal "## V1\n\n### Added\n- \n\n### Removed\n\n## V2\n\n### Added")
-      )))
+      (expect (buffer-string) :to-equal "## V1\n\n### Added\n- \n\n### Removed\n\n## V2\n\n### Added"))))
