@@ -4,7 +4,7 @@
 
 ;; Author: Thomas Fini Hansen <xen@xen.dk>
 ;; Keywords: convenience, tools
-;; Package-Requires: ((emacs "28"))
+;; Package-Requires: ((emacs "29"))
 ;; Package-Version: 0.1.0
 
 ;; This program is free software; you can redistribute it and/or modify
