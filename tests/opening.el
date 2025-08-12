@@ -41,7 +41,6 @@
         (expect (looking-at "## Version") :to-be-truthy)))))
 
 (describe "keepachangelog-add-entry"
-  :var (test-root)
 
   (it "opens changelog and adds entry"
     (with-simulated-input "Added RET"
