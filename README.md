@@ -14,14 +14,16 @@ Example using [use-package](https://github.com/jwiegley/use-package),
 ``` emacs-lisp
 (use-package keepachangelog
   :elpaca (:type git :host github :repo "xendk/keepachangelog.el")
-  :bind ("C-c a" . keepachangelog-add-entry))
+  :bind ("C-c a" . keepachangelog-open)
+        ("C-c A" . keepachangelog-add-entry))
 ```
 
 # Usage
 
 Create a `CHANGELOG.md` in the root of your project and ensure there's
 at least one version header. Now, from any file of the project you may
-call `keepachangelog-add-entry` to add a new entry.
+call `keepachangelog-open` to open the changelog, or
+`keepachangelog-add-entry` to open and add a new entry.
 
 # Assumptions
 

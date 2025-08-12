@@ -74,8 +74,8 @@ Raises user-error if not inside a version."
        (progn ,@body))))
 
 ;;;###autoload
-(defun keepachangelog-add-entry ()
-  "Open CHANGELOG.md for adding a new entry."
+(defun keepachangelog-open ()
+  "Open the nearest CHANGELOG.md."
   (interactive)
   (let ((change-log-dir (locate-dominating-file default-directory "CHANGELOG.md")))
     (if change-log-dir
@@ -83,9 +83,15 @@ Raises user-error if not inside a version."
           (find-file (concat change-log-dir "CHANGELOG.md"))
           (goto-char (point-min))
           (when-let ((point (keepachangelog--find-version)))
-            (keepachangelog-next-version)
-            (call-interactively 'keepachangelog-add-entry-to-section)))
+            (keepachangelog-next-version)))
       (user-error "Could not find CHANGELOG.md"))))
+
+;;;###autoload
+(defun keepachangelog-add-entry ()
+  "Open CHANGELOG.md and add new entry."
+  (interactive)
+  (keepachangelog-open)
+  (call-interactively 'keepachangelog-add-entry-to-section))
 
 (defun keepachangelog-next-version ()
   "Move to the next version header."

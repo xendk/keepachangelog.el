@@ -5,7 +5,7 @@
 (require 's)
 (require 'keepachangelog)
 
-(describe "keepachangelog-add-entry"
+(describe "keepachangelog-open"
   :var (test-root)
 
   (it "throws if no changelog is found"
@@ -14,7 +14,7 @@
       (setq test-root default-directory)
       (find-file "lisp/source.el")
 
-      (expect (keepachangelog-add-entry) :to-throw)))
+      (expect (keepachangelog-open) :to-throw)))
 
   (it "switches to the changlog buffer"
     (with-simulated-input "Added RET"
@@ -24,7 +24,7 @@
         (setq test-root default-directory)
         (find-file "lisp/source.el")
 
-        (keepachangelog-add-entry)
+        (keepachangelog-open)
 
         (expect (s-chop-prefix test-root (buffer-file-name (window-buffer))) :to-equal "/CHANGELOG.md"))))
 
@@ -37,6 +37,22 @@
             ("lisp/source.el"))
         (find-file "lisp/source.el")
 
+        (keepachangelog-open)
+        (expect (looking-at "## Version") :to-be-truthy)))))
+
+(describe "keepachangelog-add-entry"
+  :var (test-root)
+
+  (it "opens changelog and adds entry"
+    (with-simulated-input "Added RET"
+      (assess-with-filesystem
+          '(("CHANGELOG.md" "Preface
+## Version
+")
+            ("lisp/source.el"))
+        (find-file "lisp/source.el")
+
         (keepachangelog-add-entry)
-        ;;(expect (looking-at "- ") :to-be-truthy)
-        (expect (buffer-string) :to-equal "Preface\n## Version\n\n### Added\n- \n")))))
+        (expect (buffer-string) :to-equal "Preface\n## Version\n\n### Added\n- \n")
+        (beginning-of-line)
+        (expect (looking-at "- ") :to-be-truthy)))))
