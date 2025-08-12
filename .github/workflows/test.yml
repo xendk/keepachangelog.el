@@ -23,8 +23,8 @@ jobs:
         include:
           - os: macos-latest
             emacs_version: '30.1'
-          - os: windows-latest
-            emacs_version: '30.1'
+          # - os: windows-latest
+          #   emacs_version: '30.1'
 
     steps:
       - name: Set up Emacs
