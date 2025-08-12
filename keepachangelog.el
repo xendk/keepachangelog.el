@@ -82,7 +82,7 @@ Raises user-error if not inside a version."
         (progn
           (find-file (concat change-log-dir "CHANGELOG.md"))
           (goto-char (point-min))
-          (when-let ((point (keepachangelog--find-version)))
+          (when-let* ((point (keepachangelog--find-version)))
             (keepachangelog-next-version)))
       (user-error "Could not find CHANGELOG.md"))))
 
@@ -156,13 +156,13 @@ the current line is considered."
   "Find or add a SECTION section after point.
 
 Expects to be on the first line of sections (which may be empty)."
-  (if-let ((pos (keepachangelog--find-line (concat "### " section) 1 t)))
+  (if-let* ((pos (keepachangelog--find-line (concat "### " section) 1 t)))
       (goto-char pos)
     ;; Loop over sections until the one we're inserting.
     (let* ((sections keepachangelog--sections)
            found)
       (while (and sections (not (equal (car sections) section)))
-        (when-let ((pos (keepachangelog--find-line (concat "### " (car sections)) 1 t)))
+        (when-let* ((pos (keepachangelog--find-line (concat "### " (car sections)) 1 t)))
           (goto-char pos)
           (setq found t))
         (setq sections (cdr sections)))
