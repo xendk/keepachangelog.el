@@ -2,7 +2,7 @@
 
 # Requirements
 
-Currently only tested on Emacs 30, but it requires only 28.
+Currently only tested on Emacs 29 and 30.
 
 # Setup
 
@@ -14,8 +14,8 @@ Example using [use-package](https://github.com/jwiegley/use-package),
 ``` emacs-lisp
 (use-package keepachangelog
   :elpaca (:type git :host github :repo "xendk/keepachangelog.el")
-  :bind ("C-c a" . keepachangelog-open)
-        ("C-c A" . keepachangelog-add-entry))
+  :bind (("C-c a" . keepachangelog-open)
+         ("C-c A" . keepachangelog-add-entry)))
 ```
 
 # Usage
