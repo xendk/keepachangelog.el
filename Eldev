@@ -4,5 +4,8 @@
 (eldev-use-package-archive 'melpa)
 
 (eldev-use-plugin 'autoloads)
+(eldev-use-plugin 'undercover)
 (eldev-add-extra-dependencies 'test 'assess 's 'with-simulated-input)
 (eldev-add-loading-roots 'test "tests")
+
+(setq eldev-undercover-config '(auto codecov dontsend))
