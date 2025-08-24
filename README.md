@@ -1,5 +1,8 @@
 # Keep A Changelog for Emacs
 
+[![GitHub Actions Workflow Status](https://img.shields.io/github/actions/workflow/status/xendk/keepachangelog.el/test.yml?branch=main&style=for-the-badge)](https://github.com/xendk/keepachangelog.el/actions?query=branch%3Amain+)
+[![Codecov](https://img.shields.io/codecov/c/github/xendk/keepachangelog.el?style=for-the-badge)](https://app.codecov.io/gh/xendk/keepachangelog.el)
+
 # Requirements
 
 Currently only tested on Emacs 29 and 30.
