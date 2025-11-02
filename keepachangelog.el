@@ -22,7 +22,7 @@
 
 ;;; Commentary:
 
-;;
+;; Package to help keeping a changelog.
 
 ;;; Code:
 
